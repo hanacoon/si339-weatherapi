@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>Weather</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <!-- Don't forget to link to jQuery -->
 <style>
 	input{
@@ -9,7 +10,8 @@
 		padding: 5px;
 	}
 	#forecast{
-		/*This div should not appear until the weather is returned.*/
+		text-align: center;
+    display: none;
 	}
 	#forecast div{
 		width: 25vw;
@@ -22,24 +24,49 @@
 	}
 </style>
 <script>
+  var YourWeatherAppID = "bc014831e1b0864c7b4a9d04b20a41fd";
+  
     function gettingJSON(){
-    	console.log("Hi")
+
+      var location = "Ann Arbor";
+      var units = "imperial";
+      var locationinput = $("#location").val();
+      var farCheck = $("#fahrenheit");
+      var celCheck = $("#celcius");
+
     	// Use the OpenWeather API to return:
     	//  the current temperature 
     	//  the high temperature for the day
     	//  the low temperature for the day
     	//  the icon for the current weather.
 
+      if (locationinput.length !== 0) {
+        location = locationinput;
+        console.log(location);
+      }
 
+      if (farCheck.is(":checked")) {
+        units = "imperial";
+      }
+      if (celCheck.is(":checked")) {
+        units = "metric";
+      }
+
+      $("#forecast").show();   
 
     	// You will need to update this query with the city, weather format (Celsius or Fahrenheit) and your OpenWeatherMap ID
     	 
-    	// Right now I have it set to Chicago.  The default should be Ann Abor/Fahreheit.
-		let query = "http://api.openweathermap.org/data/2.5/weather?q=Chicago&APPID=" +YourWeatherAppID;
+    	// Right now I have it set to Chicago.  The default should be Ann Arbor/Fahreheit.
+		let query = "http://api.openweathermap.org/data/2.5/weather?q=" + location + "&APPID=" + YourWeatherAppID + "&units=" + units;
         console.log("Query is :" + query)
 
         $.getJSON(query,function(json){
             console.log(JSON.stringify(json));
+            $("#temp").html(json["main"].temp);
+            $("#high").html(json["main"].temp_max);
+            $("#low").html(json["main"].temp_min);
+            $("#tempImg").attr('src', "http://openweathermap.org/img/wn/" + json.weather[0]['icon']+ '@2x.png');
+            $("#loc").html(location);
     })
     }
     </script>
